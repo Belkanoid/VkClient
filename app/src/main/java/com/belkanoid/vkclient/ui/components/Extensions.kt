@@ -1,4 +1,4 @@
-package com.belkanoid.vkclient.screens.components
+package com.belkanoid.vkclient.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication

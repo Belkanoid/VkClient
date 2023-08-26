@@ -1,24 +1,16 @@
 package com.belkanoid.vkclient.domain.feed
 
+import java.lang.IllegalStateException
+
 data class PostStatistics(
-    val likes: Int,
-    val comments: Int,
-    val shares: Int,
-    val views: Int
+    val type: StatisticsType,
+    val value: Long,
 )
 
-fun PostStatistics.addLike(): PostStatistics {
-    return this.copy(likes = likes + 1)
+enum class StatisticsType{
+    LIKE, COMMENT, SHARE, VIEW
 }
 
-fun PostStatistics.addComment(): PostStatistics {
-    return this.copy(comments = comments + 1)
-}
-
-fun PostStatistics.addShare(): PostStatistics {
-    return this.copy(shares = shares + 1)
-}
-
-fun PostStatistics.addView(): PostStatistics {
-    return this.copy(views = views + 1)
+fun List<PostStatistics>.getItemByType(type: StatisticsType): PostStatistics {
+    return this.find { it.type == type} ?: throw IllegalStateException("not found $type type")
 }

@@ -1,7 +1,6 @@
-package com.belkanoid.vkclient.screens.feed
+package com.belkanoid.vkclient.ui.screens.feed
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
@@ -20,19 +19,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.belkanoid.vkclient.R
-import com.belkanoid.vkclient.domain.feed.PostEntity
+import com.belkanoid.vkclient.domain.feed.FeedEntity
 import com.belkanoid.vkclient.domain.feed.PostStatistics
-import com.belkanoid.vkclient.screens.components.IconWithText
-import com.belkanoid.vkclient.screens.components.noIndicationClickable
+import com.belkanoid.vkclient.domain.feed.StatisticsType
+import com.belkanoid.vkclient.domain.feed.getItemByType
+import com.belkanoid.vkclient.ui.components.IconWithText
 import com.belkanoid.vkclient.ui.theme.VkClientTheme
 
 @Composable
 fun FeedPost(
     modifier: Modifier = Modifier,
-    postData: PostEntity,
-    onLikeClick: (Int) -> Unit,
-    onCommentClick: (Int) -> Unit,
-    onShareClick: (Int) -> Unit
+    postData: FeedEntity,
+    onLikeClick: (PostStatistics) -> Unit,
+    onCommentClick: (PostStatistics) -> Unit,
+    onShareClick: (PostStatistics) -> Unit
 ) {
     Card(
         modifier = modifier,
@@ -41,11 +41,11 @@ fun FeedPost(
         Column {
             FeedHeader(
                 communityName = postData.postCommunityName,
-                postDate = postData.postDate
+                postDate = postData.postDate,
             )
             FeedContent(
                 postText = postData.postText,
-                imageResId = postData.postImageResId
+                imageResId = postData.postImageResId,
             )
             FeedStatistics(
                 postStatistics = postData.postStatistics,
@@ -75,6 +75,7 @@ private fun FeedHeader(
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
+
         Spacer(modifier = Modifier.width(8.dp))
         Column(
             modifier = Modifier.weight(1f),
@@ -108,8 +109,8 @@ private fun FeedContent(
         modifier = Modifier.padding(horizontal = 16.dp),
         color = MaterialTheme.colors.onPrimary
     )
-    Spacer(modifier = Modifier.height(8.dp))
 
+    Spacer(modifier = Modifier.height(8.dp))
     Image(
         painter = painterResource(id = imageResId),
         modifier = Modifier.fillMaxWidth(),
@@ -120,16 +121,12 @@ private fun FeedContent(
 
 @Composable
 private fun FeedStatistics(
-    postStatistics: PostStatistics,
-    onLikeClick: (Int)->Unit,
-    onCommentClick: (Int)->Unit,
-    onShareClick: (Int)->Unit,
+    postStatistics: List<PostStatistics>,
+    onLikeClick: (PostStatistics)->Unit,
+    onCommentClick: (PostStatistics)->Unit,
+    onShareClick: (PostStatistics)->Unit,
 ) {
     val backgroundColor = Color(235, 237, 240)
-    val likes = postStatistics.likes
-    val comments = postStatistics.comments
-    val shares = postStatistics.shares
-    val views = postStatistics.views
 
     Row(
         modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp),
@@ -138,42 +135,49 @@ private fun FeedStatistics(
         Row(
             modifier = Modifier.weight(1f)
         ) {
-
+            val likes = postStatistics.getItemByType(StatisticsType.LIKE)
+            val comments = postStatistics.getItemByType(StatisticsType.COMMENT)
+            val shares = postStatistics.getItemByType(StatisticsType.SHARE)
             IconWithText(
-                modifier = Modifier.noIndicationClickable {
-                    onLikeClick(likes)
-                },
                 iconResId = R.drawable.ic_like_outline_16,
-                text = likes.toString(),
-                backgroundColor = backgroundColor
+                text = likes.value.toString(),
+                backgroundColor = backgroundColor,
+                onClick =  {
+                    onLikeClick(likes)
+                }
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            IconWithText(
-                modifier = Modifier.noIndicationClickable {
-                    onCommentClick(comments)
-                },
-                iconResId = R.drawable.ic_comment_outline_16,
-                text = comments.toString(),
-                backgroundColor = backgroundColor
-            )
-            Spacer(modifier = Modifier.width(8.dp))
 
+            Spacer(modifier = Modifier.width(8.dp))
             IconWithText(
-                modifier = Modifier.noIndicationClickable {
-                    onShareClick(shares)
-                },
+                iconResId = R.drawable.ic_comment_outline_16,
+                text = comments.value.toString(),
+                backgroundColor = backgroundColor,
+                onClick = {
+                    onCommentClick(comments)
+                }
+
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+            IconWithText(
                 iconResId = R.drawable.ic_share_outline_20,
-                text = shares.toString(),
-                backgroundColor = backgroundColor
+                text = shares.value.toString(),
+                backgroundColor = backgroundColor,
+                onClick = {
+                    onShareClick(shares)
+                }
             )
         }
-
         Row(
             horizontalArrangement = Arrangement.End
         ) {
+            val views = postStatistics.getItemByType(StatisticsType.LIKE)
             IconWithText(
                 iconResId = R.drawable.ic_view_16,
-                text = views.toString(),
+                text = views.value.toString(),
+                onClick = {
+
+                }
             )
         }
     }
@@ -185,10 +189,10 @@ private fun FeedStatistics(
 fun PreviewLight() {
     VkClientTheme(darkTheme = false) {
         FeedPost(
-            postData = PostEntity(),
+            postData = FeedEntity(),
             onLikeClick = {},
             onCommentClick = {},
-            onShareClick = {}
+            onShareClick = {},
         )
     }
 }
@@ -198,10 +202,10 @@ fun PreviewLight() {
 fun PreviewDark() {
     VkClientTheme(darkTheme = true) {
         FeedPost(
-            postData = PostEntity(),
+            postData = FeedEntity(),
             onLikeClick = {},
             onCommentClick = {},
-            onShareClick = {}
+            onShareClick = {},
         )
     }
 }
