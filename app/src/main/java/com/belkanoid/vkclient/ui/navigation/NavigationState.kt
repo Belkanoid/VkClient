@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.AnimBuilder
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -15,14 +16,14 @@ class NavigationState(
         navHostController.navigate(route){
             launchSingleTop = true
             restoreState = true
-            popUpTo(navHostController.graph.startDestinationId){
+            popUpTo(navHostController.graph.findStartDestination().id){
                 saveState = true
             }
         }
     }
 
-    fun navigateBack(){
-        navHostController.navigate(navHostController.graph.last().id)
+    fun navigateToCommentScreen(){
+        navHostController.navigate(Screen.Comment.route)
     }
 }
 

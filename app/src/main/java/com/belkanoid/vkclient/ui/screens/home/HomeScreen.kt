@@ -6,6 +6,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import com.belkanoid.vkclient.domain.feed.FeedEntity
@@ -27,31 +28,32 @@ fun HomeScreen() {
             BottomNavigation(navigationState = navigationState)
         }
     ) {
-        val currentPost: MutableState<FeedEntity?> = rememberSaveable {
+        val currentPost: MutableState<FeedEntity?> = remember {
             mutableStateOf(null)
         }
+
         MainNavGraph(
             navController = navigationState.navHostController,
-            homeScreen = {
-                if (currentPost.value != null) {
-                    CommentScreen(
-                        post = currentPost.value!!,
-                        paddingValues = it,
-                        onBackPressed = {
-                            currentPost.value = null
-                        }
-                    )
-                } else {
-                    FeedScreen(
-                        paddingValues = it,
-                        onCommentClick = {
-                            currentPost.value = it
-                        }
-                    )
-                }
+            feedScreenContent = {
+                FeedScreen(
+                    paddingValues = it,
+                    onCommentClick = {
+                        currentPost.value = it
+                        navigationState.navigateToCommentScreen()
+                    }
+                )
             },
-            favouriteScreen = { },
-            profileScreen = { }
+            commentScreenContent = {
+                CommentScreen(
+                    post = currentPost.value!!,
+                    paddingValues = it,
+                    onBackPressed = {
+                        navigationState.navHostController.popBackStack()
+                    }
+                )
+            },
+            favouriteScreenContent = { },
+            profileScreenContent = { }
         )
     }
 }

@@ -1,31 +1,32 @@
 package com.belkanoid.vkclient.ui.navigation
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
-    homeScreen: @Composable () -> Unit,
-    favouriteScreen: @Composable () -> Unit,
-    profileScreen: @Composable () -> Unit
+    feedScreenContent: @Composable () -> Unit,
+    commentScreenContent: @Composable () -> Unit,
+    favouriteScreenContent: @Composable () -> Unit,
+    profileScreenContent: @Composable () -> Unit
 ) {
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route,
     ) {
-        composable(Screen.Home.route){
-            homeScreen()
-        }
+        homeNavGraph(
+            feedScreenContent = feedScreenContent,
+            commentScreenContent = commentScreenContent
+        )
         composable(Screen.Favourite.route){
-            favouriteScreen()
+            favouriteScreenContent()
         }
         composable(Screen.Profile.route){
-            profileScreen()
+            profileScreenContent()
         }
     }
 }
