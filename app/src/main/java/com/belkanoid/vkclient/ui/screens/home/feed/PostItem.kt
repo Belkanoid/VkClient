@@ -1,4 +1,4 @@
-package com.belkanoid.vkclient.ui.screens.feed
+package com.belkanoid.vkclient.ui.screens.home.feed
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.belkanoid.vkclient.R
 import com.belkanoid.vkclient.domain.feed.FeedEntity
-import com.belkanoid.vkclient.domain.feed.PostStatistics
+import com.belkanoid.vkclient.domain.feed.FeedStatistics
 import com.belkanoid.vkclient.domain.feed.StatisticsType
 import com.belkanoid.vkclient.domain.feed.getItemByType
 import com.belkanoid.vkclient.ui.components.IconWithText
@@ -30,9 +30,9 @@ import com.belkanoid.vkclient.ui.theme.VkClientTheme
 fun FeedPost(
     modifier: Modifier = Modifier,
     postData: FeedEntity,
-    onLikeClick: (PostStatistics) -> Unit,
-    onCommentClick: (PostStatistics) -> Unit,
-    onShareClick: (PostStatistics) -> Unit
+    onLikeClick: (FeedStatistics) -> Unit,
+    onCommentClick: (FeedStatistics) -> Unit,
+    onShareClick: (FeedStatistics) -> Unit
 ) {
     Card(
         modifier = modifier,
@@ -48,7 +48,7 @@ fun FeedPost(
                 imageResId = postData.postImageResId,
             )
             FeedStatistics(
-                postStatistics = postData.postStatistics,
+                feedStatistics = postData.feedStatistics,
                 onLikeClick = onLikeClick,
                 onCommentClick = onCommentClick,
                 onShareClick = onShareClick
@@ -121,10 +121,10 @@ private fun FeedContent(
 
 @Composable
 private fun FeedStatistics(
-    postStatistics: List<PostStatistics>,
-    onLikeClick: (PostStatistics)->Unit,
-    onCommentClick: (PostStatistics)->Unit,
-    onShareClick: (PostStatistics)->Unit,
+    feedStatistics: List<FeedStatistics>,
+    onLikeClick: (FeedStatistics)->Unit,
+    onCommentClick: (FeedStatistics)->Unit,
+    onShareClick: (FeedStatistics)->Unit,
 ) {
     val backgroundColor = Color(235, 237, 240)
 
@@ -135,9 +135,9 @@ private fun FeedStatistics(
         Row(
             modifier = Modifier.weight(1f)
         ) {
-            val likes = postStatistics.getItemByType(StatisticsType.LIKE)
-            val comments = postStatistics.getItemByType(StatisticsType.COMMENT)
-            val shares = postStatistics.getItemByType(StatisticsType.SHARE)
+            val likes = feedStatistics.getItemByType(StatisticsType.LIKE)
+            val comments = feedStatistics.getItemByType(StatisticsType.COMMENT)
+            val shares = feedStatistics.getItemByType(StatisticsType.SHARE)
             IconWithText(
                 iconResId = R.drawable.ic_like_outline_16,
                 text = likes.value.toString(),
@@ -171,7 +171,7 @@ private fun FeedStatistics(
         Row(
             horizontalArrangement = Arrangement.End
         ) {
-            val views = postStatistics.getItemByType(StatisticsType.LIKE)
+            val views = feedStatistics.getItemByType(StatisticsType.LIKE)
             IconWithText(
                 iconResId = R.drawable.ic_view_16,
                 text = views.value.toString(),

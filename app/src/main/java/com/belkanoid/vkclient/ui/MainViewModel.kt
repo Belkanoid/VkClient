@@ -4,25 +4,48 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.belkanoid.vkclient.domain.feed.FeedEntity
-import com.belkanoid.vkclient.domain.feed.PostStatistics
+import com.belkanoid.vkclient.domain.feed.FeedStatistics
+import com.belkanoid.vkclient.ui.screens.home.feed.FeedScreenState
 
 class MainViewModel: ViewModel() {
 
-    private val _feedPost = MutableLiveData(FeedEntity())
-    val feedPost: LiveData<FeedEntity> = _feedPost
+    private val sourceList = mutableListOf<FeedEntity>().apply {
+        repeat(10) {
+            add(FeedEntity(id = it))
+        }
+    }
+    private val initialState = FeedScreenState.Posts(posts = sourceList)
 
-    fun updateStatistics(newItem: PostStatistics) {
-        val oldStatistics = _feedPost.value!!.postStatistics
+    private val _screenState = MutableLiveData<FeedScreenState>(initialState)
+    val screenState: LiveData<FeedScreenState> = _screenState
+
+
+    fun updateCount(feedPost: FeedEntity, item: FeedStatistics) {
+        val currentState = screenState.value
+        if (currentState !is FeedScreenState.Posts) return
+
+        val oldPosts = currentState.posts.toMutableList()
+        val oldStatistics = feedPost.feedStatistics
         val newStatistics = oldStatistics.toMutableList().apply {
             replaceAll { oldItem ->
-                if (oldItem.type == newItem.type) {
+                if (oldItem.type == item.type) {
                     oldItem.copy(value = oldItem.value + 1)
                 } else {
                     oldItem
                 }
             }
         }
-        _feedPost.value = _feedPost.value?.copy(postStatistics = newStatistics)
+        val newFeedPost = feedPost.copy(feedStatistics = newStatistics)
+        val newPosts = oldPosts.apply {
+            replaceAll {
+                if (it.id == newFeedPost.id) {
+                    newFeedPost
+                } else {
+                    it
+                }
+            }
+        }
+        _screenState.value = FeedScreenState.Posts(posts = newPosts)
     }
 
 

@@ -20,6 +20,10 @@ class NavigationState(
             }
         }
     }
+
+    fun navigateBack(){
+        navHostController.navigate(navHostController.graph.last().id)
+    }
 }
 
 @SuppressLint("RememberReturnType")

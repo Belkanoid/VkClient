@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.belkanoid.vkclient.ui.screens.main.MainScreen
+import com.belkanoid.vkclient.ui.screens.home.HomeScreen
 import com.belkanoid.vkclient.ui.theme.VkClientTheme
 
 class MainActivity : ComponentActivity() {
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             VkClientTheme {
-                MainScreen(viewModel)
+                HomeScreen()
             }
         }
     }
